@@ -20,9 +20,15 @@ public class PrimsAlgorithm {
             graph.addEdge(input.nextInt(), input.nextInt(), input.nextInt());
         }
 
-        primsAlgorithm(graph, graph.adjacencyList[0]);
+        for(Vertex vertex: graph.adjacencyList) {
+            for(Edge edge: vertex.neighborhood) {
+                System.out.println(edge);
+            }
+        }
 
-        System.out.println(MSTEdgeSum(graph));
+        // primsAlgorithm(graph, graph.adjacencyList[0]);
+
+        // System.out.println(MSTEdgeSum(graph));
 
     }
 
@@ -56,6 +62,7 @@ public class PrimsAlgorithm {
                 if (priorityQueue.indexOf(v) != -1 && edge.weight < v.key) {
                     v.predecessor = u;
                     v.key = edge.weight;
+                    System.out.println(u + " : " + edge.weight);
                     priorityQueue.decreaseKey(v, edge.weight);
                 }
             }

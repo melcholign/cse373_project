@@ -8,4 +8,8 @@ public class Edge {
         this.neighbor = neighbor;
         this.weight = weight;
     }
+
+    public String toString() {
+        return neighbor.label + " : "  + weight;
+    }
 }
