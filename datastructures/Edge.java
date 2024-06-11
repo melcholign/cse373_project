@@ -22,6 +22,6 @@ public class Edge implements Comparable<Edge> {
     }
 
     public String toString() {
-        return v.index + " : "  + weight;
+        return weight + "";
     }
 }

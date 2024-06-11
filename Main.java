@@ -1,45 +1,169 @@
 import datastructures.Vertex;
 import datastructures.Edge;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class Main {
+
     public static void main(String[] args) {
 
-        Scanner input = new Scanner(System.in);
+        primsElapsedTime("prims.txt", 1000, 100, 0.5, 25, 100);
+    }
 
-        int m = input.nextInt(), n = input.nextInt();
+    public static void kruskalsElapsedTime(String dataFilename, int maxVertices, int maxEdgeWeight, double probability,
+            int intervalWidth, int cycleSize) {
 
-        Vertex[] vertices = new Vertex[m];
-        ArrayList<ArrayList<Edge>> adjacencyList = new ArrayList<>();
+        File dataFile = new File(dataFilename);
 
-        for (int i = 0; i < m; ++i) {
-            vertices[i] = new Vertex(i);
-            adjacencyList.add(new ArrayList<Edge>());
+        Vertex[] vertices;
+        Edge[] edgeList;
+        ArrayList<Edge> edges;
+        double startTime, endTime, totalElapsedTime, averageElapsedTime;
+
+        try (FileWriter writer = new FileWriter(dataFile)) {
+
+            for (int count = 0; count <= maxVertices; count += intervalWidth) {
+
+                vertices = new Vertex[count];
+
+                for (int i = 0; i < count; ++i) {
+                    vertices[i] = new Vertex(i);
+                }
+
+                totalElapsedTime = 0;
+
+                for (int j = 0; j < cycleSize; ++j) {
+                    edges = GraphGenerator.generateRandom(vertices, 0, maxEdgeWeight, probability);
+                    edgeList = new Edge[edges.size()];
+
+                    for (int i = 0; i < edges.size(); ++i) {
+                        edgeList[i] = edges.get(i);
+                    }
+
+                    startTime = System.nanoTime();
+
+                    MSTAlgorithms.kruskals(vertices, edgeList);
+
+                    endTime = System.nanoTime();
+
+                    totalElapsedTime += (endTime - startTime);
+                }
+
+                averageElapsedTime = (totalElapsedTime) / (cycleSize * 1000000);
+
+                System.out
+                        .println("Average elapsed time for an input of " + count + " vertices: " + averageElapsedTime);
+
+                writer.write(count + " " + averageElapsedTime + "\n");
+            }
+
+        } catch (IOException e) {
+            System.out.println("IOException");
         }
+    }
 
-        // Edge[] edges = new Edge[n];
-        // for (int i = 0; i < n; ++i) {
-        // edges[i] = new Edge(vertices[input.nextInt()], vertices[input.nextInt()],
-        // input.nextInt());
-        // }
+    public static void boruvkasElapsedTime(String dataFilename, int maxVertices, int maxEdgeWeight, double probability,
+            int intervalWidth, int cycleSize) {
 
-        Vertex u, v;
-        int weight;
-        for (int i = 0; i < n; ++i) {
-            u = vertices[input.nextInt()];
-            v = vertices[input.nextInt()];
-            weight = input.nextInt();
+        File dataFile = new File(dataFilename);
 
-            adjacencyList.get(u.index).add(new Edge(null, v, weight));
-            adjacencyList.get(v.index).add(new Edge(null, u, weight));
+        Vertex[] vertices;
+        Edge[] edgeList;
+        ArrayList<Edge> edges;
+        double startTime, endTime, totalElapsedTime, averageElapsedTime;
+
+        try (FileWriter writer = new FileWriter(dataFile)) {
+
+            for (int count = 0; count <= maxVertices; count += intervalWidth) {
+
+                vertices = new Vertex[count];
+
+                for (int i = 0; i < count; ++i) {
+                    vertices[i] = new Vertex(i);
+                }
+
+                totalElapsedTime = 0;
+
+                for (int j = 0; j < cycleSize; ++j) {
+                    edges = GraphGenerator.generateRandom(vertices, 0, maxEdgeWeight, probability);
+                    edgeList = new Edge[edges.size()];
+
+                    for (int i = 0; i < edges.size(); ++i) {
+                        edgeList[i] = edges.get(i);
+                    }
+
+                    startTime = System.nanoTime();
+
+                    MSTAlgorithms.boruvkas(vertices, edgeList);
+
+                    endTime = System.nanoTime();
+
+                    totalElapsedTime += (endTime - startTime);
+                }
+
+                averageElapsedTime = (totalElapsedTime) / (cycleSize * 1000000);
+
+                System.out
+                        .println("Average elapsed time for an input of " + count + " vertices: " + averageElapsedTime);
+
+                writer.write(count + " " + averageElapsedTime + "\n");
+            }
+
+        } catch (IOException e) {
+            System.out.println("IOException");
         }
+    }
 
-        MSTAlgorithms.prims(vertices, adjacencyList, vertices[0]);
+    public static void primsElapsedTime(String dataFilename, int maxVertices, int maxEdgeWeight, double probability,
+            int intervalWidth, int cycleSize) {
 
-        System.out.println(MSTAlgorithms.sumOfMinEdges(vertices));
+        File dataFile = new File(dataFilename);
 
-        input.close();
+        Vertex[] vertices;
+        ArrayList<Edge> edges;
+        ArrayList<ArrayList<Edge>> adjacencyList;
+        double startTime, endTime, totalElapsedTime, averageElapsedTime;
+
+        try (FileWriter writer = new FileWriter(dataFile)) {
+
+            for (int count = 0; count <= maxVertices; count += intervalWidth) {
+
+                vertices = new Vertex[count];
+
+                for (int i = 0; i < count; ++i) {
+                    vertices[i] = new Vertex(i);
+                }
+
+                totalElapsedTime = 0;
+
+                for (int j = 0; j < cycleSize; ++j) {
+                    edges = GraphGenerator.generateRandom(vertices, 0, maxEdgeWeight, probability);
+                    adjacencyList = GraphGenerator.getAdjacencyLists(edges, vertices.length);
+
+                    startTime = System.nanoTime();
+
+                    if (vertices.length != 0)
+                        MSTAlgorithms.prims(vertices, adjacencyList, vertices[0]);
+
+                    endTime = System.nanoTime();
+
+                    totalElapsedTime += (endTime - startTime);
+                }
+
+                averageElapsedTime = (totalElapsedTime) / (cycleSize * 1_000_000);
+
+                System.out
+                        .println("Average elapsed time for an input of " + count + " vertices: " + averageElapsedTime);
+
+                writer.write(count + " " + averageElapsedTime + "\n");
+            }
+
+        } catch (IOException e) {
+            System.out.println("IOException");
+        }
     }
 
 }

@@ -46,7 +46,6 @@ public class MSTAlgorithms {
                 if (priorityQueue.indexOf(v) != -1 && edge.weight < v.key) {
                     v.parent = u;
                     v.key = edge.weight;
-                    System.out.println(u.index + ", " + u.key + " : " + edge.weight);
                     priorityQueue.decreaseKey(v, edge.weight);
                 }
             }
